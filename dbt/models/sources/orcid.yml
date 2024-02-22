@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: ORCID
+    description: ""
+    database: collaboration-recommender
+    schema: ORCID
+    tables:
+      - name: ORCID_MEMBER
+        description: ""
+      - name: ONETIME_ORCID_MEMBER
+        description: ""
