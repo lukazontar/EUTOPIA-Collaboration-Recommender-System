@@ -11,12 +11,15 @@ select distinct
     university_name,
     department_name,
     role_title,
-    if(
-        start_year is null,
-        date(start_year, ifnull(start_month, 1), ifnull(start_day, 1))
+    date(
+        cast(start_year as int64),
+        ifnull(cast(start_month as int64), 1),
+        ifnull(cast(start_day as int64), 1)
     ) as start_dt,
-    if(
-        end_year is null, date(end_year, ifnull(end_month, 1), ifnull(end_day, 1))
+    date(
+        cast(end_year as int64),
+        ifnull(cast(end_month as int64), 1),
+        ifnull(cast(end_day as int64), 1)
     ) as end_dt,
     organization_name,
     organization_city,
