@@ -83,3 +83,7 @@ Check additional documentation in the `docs` directory.
    incremental).
 3. [Data Transformation](docs/data/03%20-%20Data%20Transformation.md): how to run data transformation pipelines
    in `dbt`.
+
+```bash
+conda env export --no-builds | findstr /V "^prefix: " > environment.yml
+```
