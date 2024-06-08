@@ -1,0 +1,9 @@
+CREATE OR REPLACE TABLE `collaboration-recommender`.DATALAKE.CROSSREF_HISTORIC_ARTICLE
+(
+    DOI  STRING,
+    JSON STRING
+);
+
+
+
+

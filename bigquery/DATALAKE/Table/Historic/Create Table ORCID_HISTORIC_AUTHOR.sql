@@ -1,0 +1,6 @@
+CREATE OR REPLACE TABLE `collaboration-recommender`.DATALAKE.ORCID_HISTORIC_AUTHOR
+(
+    FILEPATH STRING,
+    JSON     STRING
+);
+

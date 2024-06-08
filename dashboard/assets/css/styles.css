@@ -1,0 +1,41 @@
+/*
+Set primary colors
+*/
+:root {
+     --primary-color: #000d3b;
+     --secondary-color: #00a9e0;
+     --gray-color: #f8f9fa;
+ }
+
+.navbar-custom .nav-link {
+    font-size: 1.20rem;
+    padding: 0.3rem;
+}
+
+/* If it is active then make it a bit more bold and underline it with primary color*/
+.navbar-custom .nav-link.active {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* On hover make the text color a bit darker */
+.navbar-custom .nav-link:hover {
+    color: var(--primary-color);
+}
+
+.gray-background-custom {
+    background-color: var(--gray-color) !important;
+}
+
+/* Set primary font family to open sans sans-serif */
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+
+/* Set background and border color to null */
+.card-custom {
+    background-color: transparent !important;
+    border: none !important;
+}
+

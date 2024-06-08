@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: DATALAKE
+    description: ""
+    database: collaboration-recommender
+    schema: DATALAKE
+    tables:
+      - name: CROSSREF_HISTORIC_ARTICLE_PROCESSED
+        description: ""
+      - name: ORCID_HISTORIC_AUTHOR
+        description: ""
+      - name: ORCID_API_AUTHOR
+        description: ""
+      - name: CERIF_RESEARCH_TOPIC
+        description: ""
+      - name: CERIF_RESEARCH_TOPIC_TOP_N_ARTICLES
+        description: ""
