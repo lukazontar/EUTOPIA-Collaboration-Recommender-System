@@ -1,4 +1,5 @@
 PATH_TO_SECRETS_FILE: 'secrets/secrets.yml'
+RANDOM_SEED: 42
 GCP:
   PROJECT_ID: 'collaboration-recommender'
   READ_SCHEMA: "DBT_DEV"

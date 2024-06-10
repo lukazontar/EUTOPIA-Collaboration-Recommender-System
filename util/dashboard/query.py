@@ -111,7 +111,7 @@ def overview_breakdown_publications_by_institution(settings):
         SELECT INSTITUTION_SID             AS INSTITUTION,
                COUNT(DISTINCT ARTICLE_SID) AS ARTICLES
         FROM {schema}.FCT_COLLABORATION
-        WHERE INSTITUTION_SID <> 'Other'
+        WHERE INSTITUTION_SID <> 'OTHER'
         GROUP BY 1
         ORDER BY 2 ASC
     """
