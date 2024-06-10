@@ -33,6 +33,7 @@ Environment stack:
 - Docker
 - Python 3.10 (using [pyenv](https://github.com/pyenv-win/pyenv-win)
   and [venv](https://docs.python.org/3/library/venv.html))
+    - For PyMC you need to have a *conda* environment.
 - Accounts for: Google Cloud Platform, Mage AI, dbt Cloud
 
 To run Python scripts, you need to install the requirements:
