@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: DIM_ARTICLE
+    columns:
+      - name: ARTICLE_SID
+        description: "A unique identifier for the article."
+        tests:
+          - not_null
+          - unique
+      - name: ARTICLE_DOI
+        description: "The DOI of the article."
+        tests:
+          - not_null
+          - unique
+      - name: ARTICLE_URL
+        description: "The URL of the article."
+        tests:
+          - not_null
+          - unique
+      - name: ARTICLE_TITLE
+        description: "The title of the article."
+        tests:
+          - not_null
+      - name: ARTICLE_SHORT_TITLE
+        description: "The short title of the article."
+        tests:
+          - not_null
+      - name: ARTICLE_SUBTITLE
+        description: "The subtitle of the article."
+        tests:
+          - not_null
+      - name: ARTICLE_ABSTRACT
+        description: "The abstract of the article."
+        tests:
+          - not_null
+      - name: ARTICLE_PUBLICATION_DT
+        description: "The publication date of the article. We build a date from the year, month, and day data fields and default to the first day of the month if the day is not provided and the first day of the year if the month is not provided."
+        tests:
+          - not_null

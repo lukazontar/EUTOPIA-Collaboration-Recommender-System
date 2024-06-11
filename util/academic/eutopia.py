@@ -77,7 +77,7 @@ EUTOPIA_INSTITUTION_REGISTRY = {
         '_PYTHON_STRING_CONDITION': lambda lower_str: 'univer' in lower_str and 'gothenburg' in lower_str
     },
     'UNI_LJ': {
-        'INSTITUTION_SID': 'ULJ',
+        'INSTITUTION_SID': 'UNI_LJ',
         'INSTITUTION_NAME': 'University of Ljubljana',
         'INSTITUTION_PRETTY_NAME': 'University of Ljubljana',
         'INSTITUTION_COUNTRY': 'Slovenia',

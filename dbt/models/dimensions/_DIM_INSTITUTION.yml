@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: DIM_INSTITUTION
+    columns:
+      - name: INSTITUTION_SID
+        description: "A unique identifier for the institution."
+        tests:
+          - not_null
+          - unique
+          - accepted_values: { values: [ 'CY',
+                                         'GU',
+                                         'OTHER',
+                                         'TU_DRESDEN',
+                                         'UBBCLUJ',
+                                         'UNI_LJ',
+                                         'UNIVE',
+                                         'UNL',
+                                         'UPF',
+                                         'VUB',
+                                         'WARWICK',
+                                         'n/a'
+          ] }
+      - name: INSTITUTION_NAME
+        description: "The name of the institution."
+        tests:
+          - not_null
+          - unique
+      - name: INSTITUTION_PRETTY_NAME
+        description: "The pretty name of the institution."
+        tests:
+          - not_null
+      - name: INSTITUTION_COUNTRY
+        description: "The country of the institution."
+        tests:
+          - not_null
+      - name: INSTITUTION_LANGUAGE
+        description: "The language of the institution."
+        tests:
+          - not_null
+      - name: INSTITUTION_COUNTRY_ISO2
+        description: "The ISO2 code of the country of the institution."
+        tests:
+          - not_null

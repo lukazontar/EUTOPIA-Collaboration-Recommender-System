@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: DIM_AUTHOR
+    columns:
+      - name: AUTHOR_SID
+        description: "A unique identifier for the author."
+        tests:
+          - not_null
+          - unique
+      - name: AUTHOR_FULL_NAME
+        description: "The full name of the author."
+        tests:
+          - not_null
+      - name: AUTHOR_ORCID_ID
+        description: "The ORCID ID of the author."
+        tests:
+          - not_null

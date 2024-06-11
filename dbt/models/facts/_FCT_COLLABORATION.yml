@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: FCT_COLLABORATION
+    columns:
+      - name: ARTICLE_SID
+        description: "A unique identifier for the article."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('DIM_ARTICLE')
+              field: ARTICLE_SID
+      - name: AUTHOR_SID
+        description: "A unique identifier for the author."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('DIM_AUTHOR')
+              field: AUTHOR_SID
+      - name: INSTITUTION_SID
+        description: "A unique identifier for the institution."
+        tests:
+          - not_null
+          - accepted_values: { values: [ 'CY',
+                                         'GU',
+                                         'OTHER',
+                                         'TU_DRESDEN',
+                                         'UBBCLUJ',
+                                         'UNI_LJ',
+                                         'UNIVE',
+                                         'UNL',
+                                         'UPF',
+                                         'VUB',
+                                         'WARWICK',
+                                         'n/a'
+          ] }
+          - relationships:
+              to: ref('DIM_INSTITUTION')
+              field: INSTITUTION_SID
+      - name: ARTICLE_PUBLICATION_DT
+        description: "The publication date of the article. We build a date from the year, month, and day data fields and default to the first day of the month if the day is not provided and the first day of the year if the month is not provided."
+        tests:
+          - not_null
+      - name: IS_SOLE_AUTHOR_PUBLICATION
+        description: "A flag indicating whether the author is the sole author of the publication."
+        tests:
+          - not_null
+      - name: IS_INTERNAL_COLLABORATION
+        description: "A flag indicating whether the collaboration is internal."
+        tests:
+          - not_null
+      - name: IS_EXTERNAL_COLLABORATION
+        description: "A flag indicating whether the collaboration is external."
+        tests:
+          - not_null
+      - name: IS_EUTOPIAN_COLLABORATION
+        description: "A flag indicating whether the collaboration is from EUTOPIA institutions."
+        tests:
+          - not_null
+      - name: IS_EUTOPIAN_PUBLICATION
+        description: "A flag indicating whether the publication is from EUTOPIA institutions."
+        tests:
+          - not_null
+      - name: IS_NEW_COLLABORATION
+        description: "A flag indicating whether the collaboration is new."
+        tests:
+          - not_null
+      - name: PK_COLLABORATION
+        description: "The primary key of the collaboration fact. MD5 hash of the article SID, author SID and institution SID."
+        tests:
+          - not_null
+          - unique

@@ -7,12 +7,14 @@ sources:
     schema: DATALAKE
     tables:
       - name: CROSSREF_HISTORIC_ARTICLE_PROCESSED
-        description: ""
+        description: "Data from Crossref for historic articles."
       - name: ORCID_HISTORIC_AUTHOR
-        description: ""
+        description: "Data from ORCID for historic authors."
       - name: ORCID_API_AUTHOR
-        description: ""
+        description: "Data from ORCID API for authors."
       - name: CERIF_RESEARCH_TOPIC
-        description: ""
+        description: "Data from CERIF for research topics."
       - name: CERIF_RESEARCH_TOPIC_TOP_N_ARTICLES
-        description: ""
+        description: "Data from Crossref for top N articles for CERIF research topics."
+      - name: EUTOPIA_INSTITUTION
+        description: "Data from EUTOPIA for institutions."

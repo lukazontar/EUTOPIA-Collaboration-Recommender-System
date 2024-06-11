@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: FCT_ARTICLE_TOPIC
+    columns:
+      - name: ARTICLE_SID
+        description: "A unique identifier for the article."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('DIM_ARTICLE')
+              field: ARTICLE_SID
+      - name: RESEARCH_TOPIC_SID
+        description: "A unique identifier for the research topic."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('DIM_RESEARCH_TOPIC')
+              field: RESEARCH_TOPIC_SID
+      - name: RANK
+        description: "The rank of the research topic."
+        tests:
+          - not_null
+      - name: PK_ARTICLE_TOPIC
+        description: "The primary key of the article topic fact. MD5 hash of the article SID and research topic SID."
+        tests:
+          - not_null
+          - unique
