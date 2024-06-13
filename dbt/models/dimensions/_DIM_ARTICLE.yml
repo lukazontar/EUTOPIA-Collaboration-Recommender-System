@@ -34,6 +34,14 @@ models:
         description: "The abstract of the article."
         tests:
           - not_null
+      - name: ARTICLE_REFERENCE
+        description: "The list of references of an article."
+        tests:
+          - not_null
+      - name: ARTICLE_LANGUAGE
+        description: "The language of the article."
+        tests:
+          - not_null
       - name: ARTICLE_PUBLICATION_DT
         description: "The publication date of the article. We build a date from the year, month, and day data fields and default to the first day of the month if the day is not provided and the first day of the year if the month is not provided."
         tests:

@@ -18,3 +18,5 @@ sources:
         description: "Data from Crossref for top N articles for CERIF research topics."
       - name: EUTOPIA_INSTITUTION
         description: "Data from EUTOPIA for institutions."
+      - name: UNPAYWALL_API_ARTICLE
+        description: "Data from Unpaywall API for articles."

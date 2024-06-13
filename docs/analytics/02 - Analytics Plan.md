@@ -30,9 +30,9 @@ Regarding understanding the basic statistics of article collaboration we need to
 
 Going forward, we need to understand data coverage on most important fields:
 
-- How many articles has titles, abstract, references?
-- How many authors has affiliation information?
-- How many authors has ORCID ID?
+- How many articles have titles, abstract, references?
+- How many authors have affiliation information?
+- How many authors have ORCID ID?
 - How many articles are written in English vs. other languages?
 - How many articles are open access, and we can access the full text via Unpaywall?
 - ...

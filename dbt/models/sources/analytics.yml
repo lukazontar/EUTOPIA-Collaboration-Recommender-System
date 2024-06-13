@@ -10,3 +10,5 @@ sources:
         description: ""
       - name: COLLABORATION_NOVELTY
         description: ""
+      - name: ARTICLE_LANGUAGE
+        description: ""
