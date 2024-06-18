@@ -27,19 +27,19 @@ BEGIN
             COALESCE(JSON_EXTRACT_SCALAR(AUTHOR, '$.family'), '')
            )                                                      AS AUTHOR_FULL_NAME
          -- Author ORCID
-         , JSON_EXTRACT(AUTHOR, '$.ORCID')                 AS AUTHOR_ORCID_ID
-         , JSON_EXTRACT(AFFILIATION, '$.name')             AS ORIGINAL_AFFILIATION_NAME
-         , JSON_EXTRACT(JSON, '$.URL')                     AS ARTICLE_URL
+         , JSON_EXTRACT(AUTHOR, '$.ORCID')                        AS AUTHOR_ORCID_ID
+         , JSON_EXTRACT(AFFILIATION, '$.name')                    AS ORIGINAL_AFFILIATION_NAME
+         , JSON_EXTRACT(JSON, '$.URL')                            AS ARTICLE_URL
          , JSON_EXTRACT(JSON, '$.funder')                         AS ARTICLE_FUNDER
          , JSON_EXTRACT(JSON, '$.institution')                    AS ARTICLE_INSTITUTION
          , JSON_EXTRACT(JSON, '$.publisher')                      AS ARTICLE_PUBLISHER
-         , JSON_EXTRACT(JSON, '$.title')                   AS ARTICLE_TITLE
-         , JSON_EXTRACT(JSON, '$.short-title')             AS ARTICLE_SHORT_TITLE
-         , JSON_EXTRACT(JSON, '$.subtitle')                AS ARTICLE_SUBTITLE
+         , JSON_EXTRACT(JSON, '$.title')                          AS ARTICLE_TITLE
+         , JSON_EXTRACT(JSON, '$.short-title')                    AS ARTICLE_SHORT_TITLE
+         , JSON_EXTRACT(JSON, '$.subtitle')                       AS ARTICLE_SUBTITLE
          , JSON_EXTRACT(JSON, '$.original-title')                 AS ARTICLE_ORIGINAL_TITLE
          , JSON_EXTRACT(JSON, '$.container-title')                AS ARTICLE_CONTAINER_TITLE
          , JSON_EXTRACT(JSON, '$.short-container-title')          AS ARTICLE_SHORT_CONTAINER_TITLE
-         , JSON_EXTRACT(JSON, '$.abstract')                AS ARTICLE_ABSTRACT
+         , JSON_EXTRACT(JSON, '$.abstract')                       AS ARTICLE_ABSTRACT
          , JSON_EXTRACT(JSON, '$.reference')                      AS ARTICLE_REFERENCE
          -- Select minimum date from list
          , LEAST(
@@ -69,10 +69,10 @@ BEGIN
     CREATE OR REPLACE TEMP TABLE TEMP_CROSSREF_HISTORIC_ARTICLE_PROCESSED AS
     SELECT *,
            -- Add surrogate IDs
-           DATALAKE.UDF_MD5_HASH([AUTHOR_FULL_NAME, AUTHOR_ORCID_ID])           AS AUTHOR_SID,
-           DATALAKE.UDF_MD5_HASH([ARTICLE_DOI])                                 AS ARTICLE_SID,
-           DATALAKE.UDF_GET_EUTOPIA_INSTITUTION_SID(ORIGINAL_AFFILIATION_NAME)  AS INSTITUTION_SID,
-           DATALAKE.UDF_IS_EUTOPIA_AFFILIATED_STRING(ORIGINAL_AFFILIATION_NAME) AS IS_EUTOPIA_AFFILIATED_INSTITUTION
+           IF(AUTHOR_FULL_NAME = '', 'n/a', DATALAKE.UDF_MD5_HASH([AUTHOR_FULL_NAME, AUTHOR_ORCID_ID])) AS AUTHOR_SID,
+           DATALAKE.UDF_MD5_HASH([ARTICLE_DOI])                                                         AS ARTICLE_SID,
+           DATALAKE.UDF_GET_EUTOPIA_INSTITUTION_SID(ORIGINAL_AFFILIATION_NAME)                          AS INSTITUTION_SID,
+           DATALAKE.UDF_IS_EUTOPIA_AFFILIATED_STRING(ORIGINAL_AFFILIATION_NAME)                         AS IS_EUTOPIA_AFFILIATED_INSTITUTION
     FROM TEMP_CROSSREF_DOI_METADATA_PARSED;
 
     -- Insert data into target table

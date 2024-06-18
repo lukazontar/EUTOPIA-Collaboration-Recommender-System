@@ -38,6 +38,7 @@ if __name__ == '__main__':
     FROM {source_table_id}
     WHERE NOT IS_SOLE_AUTHOR_PUBLICATION
     AND EXTRACT(YEAR FROM ARTICLE_PUBLICATION_DT) >= 1995
+    AND AUTHOR_SID <> 'n/a'
     ORDER BY YEAR ASC
     """).result().to_dataframe()
 
