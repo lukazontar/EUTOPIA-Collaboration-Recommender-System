@@ -41,12 +41,13 @@ if __name__ == '__main__':
         FROM {source_table_id} S
         LEFT JOIN {target_table_id} T
         ON T.DOI = S.ARTICLE_DOI
-        LIMIT 40000
+        WHERE T.DOI IS NULL
+        LIMIT 30000
         """).result().to_dataframe()
 
-    print("[INFO] Fetching articles from target table...")
+    print("[INFO] Filtering non-supported languages...")
 
-    # Filter out non-English articles
+    # Filter out unsupported language articles
     articles = articles[
         articles.EMBEDDING_INPUT.apply(lambda x: detect(x) in config.EMBEDDING.ARTICLE.SUPPORTED_LANGUAGES)]
 
