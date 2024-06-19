@@ -14,8 +14,10 @@ import sys
 from box import Box
 from bs4 import BeautifulSoup
 from google.cloud import bigquery
+from loguru import logger
 
 from util.academic.cerif import extract_research_topics
+from util.common.helpers import set_logger
 
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -26,6 +28,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -36,7 +40,7 @@ if __name__ == '__main__':
     bq_client = bigquery.Client(project=config.GCP.PROJECT_ID)
 
     # Print that the process is starting
-    print("[INFO] Started processing the CERIF registry...")
+    logger.info("Started processing the CERIF registry...")
     # Read the HTML file
     with open(config.HISTORIC.CERIF.PATH_TO_HTML_FILE, 'r', encoding='windows-1250') as file:
         html_content = file.read()
@@ -60,4 +64,4 @@ if __name__ == '__main__':
     )
 
     # Print that the process is finished
-    print(f"[INFO] Finished processing the CERIF registry and data is saved to table: {target_table_id_research_topic}")
+    logger.info(f"Finished processing the CERIF registry and data is saved to table: {target_table_id_research_topic}")

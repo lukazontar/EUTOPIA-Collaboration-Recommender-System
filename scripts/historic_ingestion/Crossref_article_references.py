@@ -8,16 +8,19 @@ We assume that the reference articles are an important data point for article em
 # -------------------- IMPORT LIBRARIES --------------------
 from box import Box
 from google.cloud import bigquery
+from loguru import logger
 
 from util.academic.crossref import process_reference_article
+from util.common.helpers import iterative_offload_to_bigquery, set_logger
 from util.common.query import get_datalake_reference_articles
-from util.common.helpers import iterative_offload_to_bigquery
 
 # -------------------- GLOBAL VARIABLES --------------------
 PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -28,7 +31,7 @@ if __name__ == '__main__':
     bq_client = bigquery.Client(project=config.GCP.PROJECT_ID)
 
     # Print that the process has started
-    print("[INFO] Fetching Crossref reference article metadata for EUTOPIA articles...")
+    logger.info("Fetching Crossref reference article metadata for EUTOPIA articles...")
 
     # Get the articles that are included in the network
     articles = get_datalake_reference_articles(client=bq_client,
@@ -41,7 +44,7 @@ if __name__ == '__main__':
     articles = articles[~articles.REFERENCE_ARTICLE_DOI.isin(loaded_articles.DOI)]
 
     # Print that missing articles have been selected
-    print("[INFO] Missing articles have been selected.")
+    logger.info("Missing articles have been selected.")
 
     # Process the articles
     iterative_offload_to_bigquery(
@@ -54,5 +57,5 @@ if __name__ == '__main__':
     )
 
     # Print that the process has finished
-    print(
-        f"[INFO] Crossref reference article metadata for EUTOPIA articles fetched and offloaded to table {target_table_id}.")
+    logger.info(
+        f"Crossref reference article metadata for EUTOPIA articles fetched and offloaded to table {target_table_id}.")

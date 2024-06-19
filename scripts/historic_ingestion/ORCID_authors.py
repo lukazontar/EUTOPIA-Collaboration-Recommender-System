@@ -10,15 +10,18 @@ import tarfile
 
 from box import Box
 from google.cloud import bigquery
+from loguru import logger
 
 from util.academic.orcid import process_tarfile_file
-from util.common.helpers import iterative_offload_to_bigquery
+from util.common.helpers import iterative_offload_to_bigquery, set_logger
 
 # -------------------- GLOBAL VARIABLES --------------------
 PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -29,7 +32,7 @@ if __name__ == '__main__':
     target_table_id = f"{config.GCP.PROJECT_ID}.{config.GCP.INGESTION_SCHEMA}.{config.HISTORIC.ORCID_TARFILE.TARGET_TABLE_NAME}"
 
     # Print that the process is starting
-    print("[INFO] Started processing the ORCID yearly dump...")
+    logger.info("Started processing the ORCID yearly dump...")
     # Process the tarfile
     with tarfile.open(config.HISTORIC.ORCID_TARFILE.FILE_PATH, "r:gz") as tar:
         # Setup metadata
@@ -48,4 +51,4 @@ if __name__ == '__main__':
         )
 
     # Print that the process is finished
-    print(f"[INFO] Finished processing the ORCID yearly dump and data is saved to table: {target_table_id}")
+    logger.info(f"Finished processing the ORCID yearly dump and data is saved to table: {target_table_id}")

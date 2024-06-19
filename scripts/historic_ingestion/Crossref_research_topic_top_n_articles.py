@@ -8,13 +8,15 @@ This script reads through the CERIF research topics and fetches top N most relev
 
 import os
 import sys
-import pandas as pd
 
+import pandas as pd
 from box import Box
-from tqdm import tqdm
 from google.cloud import bigquery
+from loguru import logger
+from tqdm import tqdm
 
 from util.academic.crossref import query_top_n_by_keyword
+from util.common.helpers import set_logger
 
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -25,6 +27,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -38,7 +42,7 @@ if __name__ == '__main__':
     # --------------- Main functionality ---------------
 
     # Print that the process is starting
-    print("[INFO] Started fetching Crossref articles related to CERIF research topics...")
+    logger.info("Started fetching Crossref articles related to CERIF research topics...")
 
     # Read data from the source table
     df_cerif = bq_client.query(f"SELECT * FROM {source_table_id_research_topic}").result().to_dataframe()
@@ -78,5 +82,5 @@ if __name__ == '__main__':
     )
 
     # Print that the process is finished
-    print(
-        f"[INFO] Finished fetching Crossref articles related to CERIF research topics and data is saved to table: {target_table_id_article}")
+    logger.info(
+        f"Finished fetching Crossref articles related to CERIF research topics and data is saved to table: {target_table_id_article}")

@@ -9,14 +9,15 @@ The metadata is then offloaded to BigQuery for further analysis. Main point for 
 
 import os
 import sys
-import pandas as pd
 
+import pandas as pd
 from box import Box
 from google.cloud import bigquery
+from loguru import logger
 
 from util.academic.orcid import process_orcid_id, fetch_access_token
+from util.common.helpers import iterative_offload_to_bigquery, set_logger
 from util.common.query import get_datalake_authors
-from util.common.helpers import iterative_offload_to_bigquery
 
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -65,6 +66,8 @@ def exclude_loaded_authors(_df: pd.DataFrame,
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration files
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
     secrets = Box.from_yaml(filename=config.PATH_TO_SECRETS_FILE)
@@ -77,7 +80,7 @@ if __name__ == '__main__':
     bq_client = bigquery.Client(project=config.GCP.PROJECT_ID)
 
     # Print that the authors are fetched
-    print("[INFO] Fetching missing authors...")
+    logger.info("Fetching missing authors...")
 
     # Get the authors that are included in the network
     authors = get_datalake_authors(client=bq_client,
@@ -101,7 +104,7 @@ if __name__ == '__main__':
     )
 
     # Print that the authors are fetched and that the missing authors are being processed
-    print("[INFO] Missing authors selected, processing...")
+    logger.info("Missing authors selected, processing...")
 
     # Process the authors
     iterative_offload_to_bigquery(
@@ -115,5 +118,5 @@ if __name__ == '__main__':
     )
 
     # Print final message
-    print(
-        f"[INFO] Finished processing ORCID API historic data. All the data was successfully offloaded to {api_offload_table_id}.")
+    logger.info(
+        f"Finished processing ORCID API historic data. All the data was successfully offloaded to {api_offload_table_id}.")

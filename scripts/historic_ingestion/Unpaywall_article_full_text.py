@@ -11,11 +11,12 @@ import os
 import sys
 
 from box import Box
-
 from google.cloud import bigquery
-from util.common.query import get_datalake_articles
-from util.common.helpers import iterative_offload_to_bigquery
+from loguru import logger
+
 from util.academic.unpaywall import process_doi
+from util.common.helpers import iterative_offload_to_bigquery, set_logger
+from util.common.query import get_datalake_articles
 
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -26,6 +27,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -36,7 +39,7 @@ if __name__ == '__main__':
     bq_client = bigquery.Client(project=config.GCP.PROJECT_ID)
 
     # Print that the process has started
-    print("[INFO] Fetching Unpaywall metadata for EUTOPIA articles...")
+    logger.info("Fetching Unpaywall metadata for EUTOPIA articles...")
 
     # Get the articles that are included in the network
     articles = get_datalake_articles(client=bq_client,
@@ -49,7 +52,7 @@ if __name__ == '__main__':
     articles = articles[~articles.ARTICLE_DOI.isin(loaded_articles.DOI)]
 
     # Print that missing articles have been selected
-    print("[INFO] Missing articles have been selected.")
+    logger.info("Missing articles have been selected.")
 
     # Process the articles
     iterative_offload_to_bigquery(
@@ -62,4 +65,4 @@ if __name__ == '__main__':
     )
 
     # Print that the process has finished
-    print(f"[INFO] Unpaywall metadata for EUTOPIA articles fetched and offloaded to table {target_table_id}.")
+    logger.info(f"Unpaywall metadata for EUTOPIA articles fetched and offloaded to table {target_table_id}.")

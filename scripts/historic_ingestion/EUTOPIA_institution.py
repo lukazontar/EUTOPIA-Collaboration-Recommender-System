@@ -9,12 +9,14 @@ some helper functions.
 
 import os
 import sys
-import pandas as pd
 
+import pandas as pd
 from box import Box
 from google.cloud import bigquery
+from loguru import logger
 
 from util.academic.eutopia import EUTOPIA_INSTITUTION_REGISTRY, EUTOPIA_INSTITUTION_BIGQUERY_COLUMNS
+from util.common.helpers import set_logger
 
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -25,6 +27,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -41,7 +45,7 @@ if __name__ == '__main__':
     )[EUTOPIA_INSTITUTION_BIGQUERY_COLUMNS]
 
     # Print that we are creating the table
-    print(f"[INFO] Creating the table {target_table_id}...")
+    logger.info(f"Creating the table {target_table_id}...")
     # Configure the load job to replace data on an existing table
     job_config = bigquery.LoadJobConfig(
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
@@ -55,12 +59,12 @@ if __name__ == '__main__':
     )
 
     # Print that the table was created
-    print(f"[INFO] Table {target_table_id} was created.")
+    logger.info(f"Table {target_table_id} was created.")
 
     # ------------ FUNCTION: IS_EUTOPIA_AFFILIATED_STRING ------------
 
     # Print that we are creating the function
-    print("[INFO] Creating the function UDF_IS_EUTOPIA_AFFILIATED_STRING...")
+    logger.info("Creating the function UDF_IS_EUTOPIA_AFFILIATED_STRING...")
     # Create a BigQuery function to check if a string contains any of the EUTOPIA universities, where the SQL condition is located in EUTOPIA_INSTITUTION_REGISTRY['_SQL_STRING_CONDITION']
     query = F"""
     CREATE OR REPLACE FUNCTION `{config.GCP.PROJECT_ID}.{config.GCP.INGESTION_SCHEMA}.UDF_IS_EUTOPIA_AFFILIATED_STRING`(organization_string STRING)
@@ -80,12 +84,12 @@ if __name__ == '__main__':
     job = bq_client.query(query.format(project_id=config.GCP.PROJECT_ID, dataset_id=config.GCP.INGESTION_SCHEMA))
 
     # Print that the function was created
-    print("[INFO] Function UDF_IS_EUTOPIA_AFFILIATED_STRING was created.")
+    logger.info("Function UDF_IS_EUTOPIA_AFFILIATED_STRING was created.")
 
     # ------------ FUNCTION: GET_EUTOPIA_INSTITUTION_ID ------------
 
     # Print that we are creating the function
-    print("[INFO] Creating the function UDF_GET_EUTOPIA_INSTITUTION_SID...")
+    logger.info("Creating the function UDF_GET_EUTOPIA_INSTITUTION_SID...")
 
     # Create a BigQuery function to get the EUTOPIA institution ID from a string
     query = f"""
@@ -110,4 +114,4 @@ if __name__ == '__main__':
     job = bq_client.query(query.format(project_id=config.GCP.PROJECT_ID, dataset_id=config.GCP.INGESTION_SCHEMA))
 
     # Print that the function was created
-    print("[INFO] Function UDF_GET_EUTOPIA_INSTITUTION_SID was created.")
+    logger.info("Function UDF_GET_EUTOPIA_INSTITUTION_SID was created.")

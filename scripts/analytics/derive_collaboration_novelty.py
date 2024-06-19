@@ -1,19 +1,27 @@
 """
 Script: Derive new collaborations
 
-This script reads through the published articles and defines the ones that are new collaborations based on the authors' affiliations and historic collaborations.
+This script reads through the published articles and defines the ones that are new collaborations based on the authors'
+affiliations and historic collaborations.
 It also calculates the Novelty Collaboration Index (NCI) for each article.
+New collaboration is defined on author level and institution level, whereas NCI is calculated on publication level.
+
+This script is designed to be run incrementally and logs the calculation details to a separate table in BigQuery besides
+the table where final results are stored.
 
 """
-import itertools
-
-# -------------------- IMPORT LIBRARIES --------------------
-
 from box import Box
 from google.cloud import bigquery
+from google.cloud import storage
+from loguru import logger
+from tqdm import tqdm
 
-from util.analytics.collaboration_novelty import process_article_collaboration_novelty, query_publication_for_year
-from util.common.helpers import conditional_offload_batch_to_bigquery
+from util.collaboration_novelty.graph import fetch_collaboration_graph, save_graphs
+from util.collaboration_novelty.process import process_article_collaboration_novelty
+from util.collaboration_novelty.query import query_collaboration_batch, query_collaboration_n_batches
+from util.common.helpers import offload_batch_to_bigquery, set_logger
+
+# -------------------- IMPORT LIBRARIES --------------------
 
 # -------------------- GLOBAL VARIABLES --------------------
 PATH_TO_CONFIG_FILE = 'config.yml'
@@ -21,78 +29,82 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 # -------------------- MAIN SCRIPT --------------------
 
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
     # Full table IDs
     source_table_id = f"{config.GCP.PROJECT_ID}.{config.GCP.READ_SCHEMA}.{config.ANALYTICS.COLLABORATION_NOVELTY.SOURCE_TABLE_NAME}"
-    target_table_id = f"{config.GCP.PROJECT_ID}.{config.GCP.ANALYTICS_SCHEMA}.{config.ANALYTICS.COLLABORATION_NOVELTY.TARGET_TABLE_NAME}"
+    target_table_id_collaboration_novelty_metadata = f"{config.GCP.PROJECT_ID}.{config.GCP.ANALYTICS_SCHEMA}.{config.ANALYTICS.COLLABORATION_NOVELTY.TARGET_TABLE_NAME_COLLABORATION_NOVELTY_METADATA}"
+    target_table_id_collaboration_novelty_index = f"{config.GCP.PROJECT_ID}.{config.GCP.ANALYTICS_SCHEMA}.{config.ANALYTICS.COLLABORATION_NOVELTY.TARGET_TABLE_NAME_COLLABORATION_NOVELTY_INDEX}"
 
-    # Create a BigQuery client
+    # Create a BigQuery client and a Google Cloud Storage client
     bq_client = bigquery.Client(project=config.GCP.PROJECT_ID)
+    storage_client = storage.Client(project=config.GCP.PROJECT_ID)
+    bucket = storage_client.get_bucket(bucket_or_name=config.GCP.BUCKET_NAME)
 
-    print("[INFO] Fetching all available years to query...")
+    logger.info("Fetching number of batches...")
+    N = query_collaboration_n_batches(bq_client=bq_client,
+                                      source_table_id=source_table_id,
+                                      target_table_id=target_table_id_collaboration_novelty_index,
+                                      batch_size=config.ANALYTICS.COLLABORATION_NOVELTY.BATCH_SIZE,
+                                      min_year=config.ANALYTICS.COLLABORATION_NOVELTY.MIN_YEAR)
 
-    years = bq_client.query(f"""
-    SELECT DISTINCT EXTRACT(YEAR FROM ARTICLE_PUBLICATION_DT) AS YEAR
-    FROM {source_table_id}
-    WHERE NOT IS_SOLE_AUTHOR_PUBLICATION
-    AND EXTRACT(YEAR FROM ARTICLE_PUBLICATION_DT) >= 1995
-    AND AUTHOR_SID <> 'n/a'
-    ORDER BY YEAR ASC
-    """).result().to_dataframe()
+    # # Get the author and institution collaboration history
+    G_a, G_i = fetch_collaboration_graph(
+        bucket=bucket,
+        graph_a_blob_name=config.ANALYTICS.COLLABORATION_NOVELTY.GRAPH_AUTHOR_COLLABORATION_BLOB_NAME,
+        graph_i_blob_name=config.ANALYTICS.COLLABORATION_NOVELTY.GRAPH_INSTITUTION_COLLABORATION_BLOB_NAME
+    )
 
-    # Initialize the collaboration history dictionaries
-    author_collaboration_history = dict()
-    institution_collaboration_history = dict()
+    logger.info("Iterating through batches...")
+    # Iterate through all the batches
+    for ix in tqdm(range(N)):
+        df_batch = query_collaboration_batch(bq_client=bq_client,
+                                             source_table_id=source_table_id,
+                                             target_table_id=target_table_id_collaboration_novelty_index,
+                                             batch_size=config.ANALYTICS.COLLABORATION_NOVELTY.BATCH_SIZE,
+                                             min_year=config.ANALYTICS.COLLABORATION_NOVELTY.MIN_YEAR)
 
-    # List of collaborations
-    collaborations = []
-
-    # Iterate through all the years
-    for ix, year in enumerate(years['YEAR']):
-        print(f"[INFO] Fetching all the articles for the year {year}...")
-        # Get the articles that are included in the network
-        articles = query_publication_for_year(bq_client=bq_client,
-                                              source_table_id=source_table_id,
-                                              year=year)
-
-        print(f"[INFO] Iterating through all the articles for the year {year}...")
+        # Initialize the lists to store the collaboration novelty index and the metadata
+        cni_rows, metadata_rows = list(), list()
 
         # Iterate through all the articles
-        for article_sid in articles['ARTICLE_SID'].unique():
-            # Get the authors and institutions of the article
-            authors = articles[articles['ARTICLE_SID'] == article_sid]['AUTHOR_SID'].unique()
-            institutions = articles[articles['ARTICLE_SID'] == article_sid]['INSTITUTION_SID'].unique()
+        for iy, article_sid in enumerate(df_batch['ARTICLE_SID'].unique()):
+            # Get the article rows
+            df_batch_article = df_batch[df_batch['ARTICLE_SID'] == article_sid]
+            # Get the authors and institutions pairs for the article
+            author_institution_pairs = df_batch_article[['AUTHOR_SID', 'INSTITUTION_SID']].drop_duplicates()
 
             # Process the article
-            collaboration, author_collaboration_history, institution_collaboration_history = process_article_collaboration_novelty(
-                authors=authors,
-                institutions=institutions,
+            cni_row_i, metadata_rows_i = process_article_collaboration_novelty(
                 article_sid=article_sid,
-                author_collaboration_history=author_collaboration_history,
-                institution_collaboration_history=institution_collaboration_history
+                df=df_batch_article,
+                G_a=G_a,
+                G_i=G_i,
             )
 
-            # Append the collaboration to the list
-            collaborations.append(collaboration)
+            # Append the collaboration to the lists
+            cni_rows.append(cni_row_i)
+            metadata_rows.extend(metadata_rows_i)
 
-        # Write the results to BigQuery every N years
-        is_offloaded = conditional_offload_batch_to_bigquery(lst_batch=collaborations,
-                                                             table_id=target_table_id,
-                                                             client=bq_client,
-                                                             ix_iter=ix,
-                                                             n_max_iterations=config.ANALYTICS.COLLABORATION_NOVELTY.N_MAX_ITERATIONS_TO_OFFLOAD)
-        # Reset the list of collaborations if offloaded
-        if is_offloaded:
-            collaborations = []
+        # Write the results to BigQuery
+        # 1. Collaboration Novelty Index
+        offload_batch_to_bigquery(lst_batch=cni_rows,
+                                  table_id=target_table_id_collaboration_novelty_index,
+                                  client=bq_client,
+                                  verbose=False)
 
-    # Write the rest of results to BigQuery
-    conditional_offload_batch_to_bigquery(lst_batch=collaborations,
-                                          table_id=target_table_id,
-                                          client=bq_client,
-                                          ix_iter=ix,
-                                          n_max_iterations=config.ANALYTICS.COLLABORATION_NOVELTY.N_MAX_ITERATIONS_TO_OFFLOAD)
+        # 2. Collaboration Novelty Metadata
+        offload_batch_to_bigquery(lst_batch=metadata_rows,
+                                  table_id=target_table_id_collaboration_novelty_metadata,
+                                  client=bq_client,
+                                  verbose=False)
 
-    # Reset the list of collaborations
-    collaborations = []
+    # Save the graphs to Google Cloud Storage
+    save_graphs(bucket=bucket,
+                _G_a=G_a,
+                _G_i=G_i,
+                graph_i_blob_name=config.ANALYTICS.COLLABORATION_NOVELTY.GRAPH_INSTITUTION_COLLABORATION_BLOB_NAME,
+                graph_a_blob_name=config.ANALYTICS.COLLABORATION_NOVELTY.GRAPH_AUTHOR_COLLABORATION_BLOB_NAME)

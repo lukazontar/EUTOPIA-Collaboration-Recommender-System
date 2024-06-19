@@ -10,9 +10,10 @@ It also calculates the Novelty Collaboration Index (NCI) for each article.
 
 from box import Box
 from google.cloud import bigquery
+from loguru import logger
 
 from util.analytics.article_language import process_article_language
-from util.common.helpers import iterative_offload_to_bigquery
+from util.common.helpers import iterative_offload_to_bigquery, set_logger
 
 # -------------------- GLOBAL VARIABLES --------------------
 PATH_TO_CONFIG_FILE = 'config.yml'
@@ -20,6 +21,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 # -------------------- MAIN SCRIPT --------------------
 
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -30,7 +33,7 @@ if __name__ == '__main__':
     # Create a BigQuery client
     bq_client = bigquery.Client(project=config.GCP.PROJECT_ID)
 
-    print("[INFO] Fetching all relevant articles to query...")
+    logger.info("Fetching all relevant articles to query...")
 
     # Query all the articles
     articles = bq_client.query(f"""
@@ -40,7 +43,7 @@ if __name__ == '__main__':
     WHERE T.ARTICLE_DOI IS NULL
     """).result().to_dataframe()
 
-    print("[INFO] Fetching article languages...")
+    logger.info("Fetching article languages...")
 
     # Process the articles
     iterative_offload_to_bigquery(

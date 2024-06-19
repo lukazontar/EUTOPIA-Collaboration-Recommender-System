@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-
 from google.cloud import bigquery
+from loguru import logger
 from tqdm import tqdm
 
 from util.common.helpers import offload_batch_to_bigquery
@@ -21,7 +21,7 @@ def process_article_embedding_batch(article_embeddings: pd.DataFrame,
     :param bq_client: The BigQuery client.
     :param target_table_id: The target table ID.
     """
-    print("[INFO] Calculating the cosine similarity between the research topics and the articles...")
+    logger.info("Calculating the cosine similarity between the research topics and the articles...")
 
     # Initialize the article-topic mapping
     article_topic_mapping = []
@@ -44,7 +44,7 @@ def process_article_embedding_batch(article_embeddings: pd.DataFrame,
             # Append to the article-topic mapping list
             article_topic_mapping.append(article_topic)
 
-    print("[INFO] Offloading the article-topic mapping to BigQuery...")
+    logger.info("Offloading the article-topic mapping to BigQuery...")
     offload_batch_to_bigquery(client=bq_client,
                               table_id=target_table_id,
                               lst_batch=article_topic_mapping)

@@ -13,9 +13,9 @@ import sys
 from box import Box
 from google.cloud import bigquery
 
-from util.common.helpers import iterative_offload_to_bigquery
+from util.common.helpers import iterative_offload_to_bigquery, set_logger
 from util.embedding.helpers import get_model_and_tokenizer, split_list_to_batch
-from util.embedding.research_topic import embed_research_topic_metadata, embed_research_topic_top_n_articles_batch
+from util.embedding.research_topic import embed_research_topic_top_n_articles_batch
 
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -26,6 +26,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 

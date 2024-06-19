@@ -12,9 +12,10 @@ import sys
 
 from box import Box
 from google.cloud import bigquery
+from loguru import logger
 
-from util.common.helpers import iterative_offload_to_bigquery
 from util.academic.crossref import process_json_gz
+from util.common.helpers import iterative_offload_to_bigquery, set_logger
 
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -24,6 +25,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -39,7 +42,7 @@ if __name__ == '__main__':
     }
 
     # Print start message
-    print("[INFO] Starting the process of Crossref historic data...")
+    logger.info("Starting the process of Crossref historic data...")
 
     # Process Crossref historic data from yearly data dump
     iterative_offload_to_bigquery(
@@ -54,5 +57,5 @@ if __name__ == '__main__':
     )
 
     # Print final message
-    print(
-        f"[INFO] Finished processing Crossref historic data. All the data was successfully offloaded to {target_table_id}.")
+    logger.info(
+        f"Finished processing Crossref historic data. All the data was successfully offloaded to {target_table_id}.")

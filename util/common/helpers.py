@@ -1,7 +1,8 @@
 import backoff
-import requests
 import pandas as pd
+import requests
 from google.cloud import bigquery
+from loguru import logger
 from tqdm import tqdm
 
 MAILTO_EMAIL = 'luka.zontar.consulting@gmail.com'
@@ -31,13 +32,15 @@ def make_request(url: str,
 def offload_batch_to_bigquery(lst_batch: list,
                               table_id: str,
                               client: bigquery.Client,
-                              data_schema: list = None) -> None:
+                              data_schema: list = None,
+                              verbose: bool = True) -> None:
     """
     Offloads a batch of records to BigQuery.
     :param data_schema: The schema of the data to offload.
     :param client: BigQuery client.
     :param lst_batch: List of records to offload.
     :param table_id: The ID of the destination table in BigQuery.
+    :param verbose: If True, print an info message on success.
     """
     # Convert the list of records to a DataFrame
     df_batch = pd.DataFrame(lst_batch)
@@ -64,7 +67,8 @@ def offload_batch_to_bigquery(lst_batch: list,
     job.result()
 
     # Print info message on success
-    print(f"[INFO] [INFO] Offloaded a batch of {len(df_batch)} items to BigQuery.")
+    if verbose:
+        logger.info(f"Offloaded a batch of {len(df_batch)} items to BigQuery.")
 
 
 def get_empty_iteration_settings(total_records: int = 0) -> dict:
@@ -79,7 +83,34 @@ def get_empty_iteration_settings(total_records: int = 0) -> dict:
     }
 
 
-#
+def process_worker_batch(**kwargs) -> None:
+    """
+    Process a batch of items with a single worker.
+    :param kwargs: Key worded arguments including all the parameters for function iterative_offload_to_bigquery.
+    """
+    iterable = kwargs.get('iterable', None)
+    function_process_single = kwargs.get('function_process_single', None)
+    table_id = kwargs.get('table_id', None)
+    client = bigquery.Client(kwargs.get('metadata', None)['bq_project_id'])
+    metadata = kwargs.get('metadata', None)
+    max_records = kwargs.get('max_records', None)
+    max_iterations_to_offload = kwargs.get('max_iterations_to_offload', 5000)
+    start_iteration = kwargs.get('start_iteration', 0)
+    data_schema = kwargs.get('data_schema', None)
+
+    iterative_offload_to_bigquery(
+        iterable=iterable,
+        function_process_single=function_process_single,
+        table_id=table_id,
+        client=client,
+        metadata=metadata,
+        max_records=max_records,
+        max_iterations_to_offload=max_iterations_to_offload,
+        start_iteration=start_iteration,
+        data_schema=data_schema
+    )
+
+
 def iterative_offload_to_bigquery(iterable: list,
                                   function_process_single: callable,
                                   table_id: str,
@@ -91,7 +122,7 @@ def iterative_offload_to_bigquery(iterable: list,
                                   data_schema: list = None) -> None:
     """
     A wrapper function to process a list of items in a historic data dump and offload the results to BigQuery.
-    :param schema: The schema of the data to offload.
+    :param data_schema: The schema of the data to offload.
     :param start_iteration: The iteration to start from.
     :param max_iterations_to_offload:  The maximum number of iterations to offload to BigQuery.
     :param iterable: The iterable to process.
@@ -160,3 +191,22 @@ def conditional_offload_batch_to_bigquery(lst_batch: list,
 
     # Return False if the batch is not offloaded
     return False
+
+
+def element_in_flattened_list(element: str,
+                              list_of_lists: list) -> bool:
+    """
+    Check if an element is in a list of lists.
+    :param element: Element to check.
+    :param list_of_lists: List of lists to check.
+    :return: True if the element is in the list of lists, False otherwise.
+    """
+    return any(element in sublist for sublist in list_of_lists)
+
+
+def set_logger():
+    logger.add(sink='log/test.log',
+               enqueue=True,
+               colorize=True,
+               format="<green>{time}</green> <level>{message}</level>",
+               rotation="50 MB")

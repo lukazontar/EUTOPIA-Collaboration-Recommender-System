@@ -12,9 +12,10 @@ import sys
 
 from box import Box
 from google.cloud import bigquery
+from loguru import logger
 from tqdm import tqdm
 
-from util.common.helpers import offload_batch_to_bigquery
+from util.common.helpers import offload_batch_to_bigquery, set_logger
 from util.embedding.helpers import get_model_and_tokenizer
 from util.embedding.research_topic import combine_research_topic_embeddings
 
@@ -27,6 +28,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -42,7 +45,7 @@ if __name__ == '__main__':
     target_table_id = f"{config.GCP.PROJECT_ID}.{config.GCP.ANALYTICS_SCHEMA}.{config.EMBEDDING.RESEARCH_TOPIC_COMBINED.TARGET_TABLE_NAME}"
 
     # Print that we start extracting the data
-    print("[INFO] Extracting the texts to embed...")
+    logger.info("Extracting the texts to embed...")
 
     # Extract the texts to embed
     df_research_topic_metadata = bq_client.query(
@@ -51,7 +54,7 @@ if __name__ == '__main__':
         f"SELECT * FROM {source_table_id_research_topic_top_n_articles}").result().to_dataframe()
 
     # Print that we start combining embeddings
-    print("[INFO] Combining the embeddings...")
+    logger.info("Combining the embeddings...")
 
     # Initialize the list of combined embeddings
     lst_embeddings_combined = list()
@@ -85,4 +88,4 @@ if __name__ == '__main__':
                               data_schema=data_schema)
 
     # Print that the embeddings have been combined and stored to target table
-    print(f"[INFO] Combined embeddings have been stored to table {target_table_id}.")
+    logger.info(f"Combined embeddings have been stored to table {target_table_id}.")

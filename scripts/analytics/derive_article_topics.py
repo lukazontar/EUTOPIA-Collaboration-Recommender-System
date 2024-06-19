@@ -10,8 +10,10 @@ for each article based on the article embeddings and the research topic embeddin
 
 from box import Box
 from google.cloud import bigquery
+from loguru import logger
 
 from util.analytics.article_topic import process_article_embedding_batch
+from util.common.helpers import set_logger
 
 # -------------------- GLOBAL VARIABLES --------------------
 PATH_TO_CONFIG_FILE = 'config.yml'
@@ -19,6 +21,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 # -------------------- MAIN SCRIPT --------------------
 
 if __name__ == '__main__':
+    # Set logger 
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
@@ -30,7 +34,7 @@ if __name__ == '__main__':
     # Create a BigQuery client
     bq_client = bigquery.Client(project=config.GCP.PROJECT_ID)
 
-    print("[INFO] Fetching all research topic embeddings...")
+    logger.info("Fetching all research topic embeddings...")
 
     # Fetch all research topic embeddings
     topic_embeddings = bq_client.query(f"""
@@ -43,7 +47,7 @@ if __name__ == '__main__':
     # Extract the research topic embeddings
     topic_embedding_values = topic_embeddings['EMBEDDING_TENSOR_DATA'].values.tolist()
 
-    print("[INFO] Fetching article embeddings batch...")
+    logger.info("Fetching article embeddings batch...")
 
     # Fetch all article embeddings that are not yet in the target table
     while bq_client.query(f"""SELECT COUNT(1)

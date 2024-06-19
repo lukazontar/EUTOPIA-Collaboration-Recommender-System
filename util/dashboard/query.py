@@ -2,6 +2,7 @@ import json
 
 import pandas as pd
 import redis
+from loguru import logger
 
 
 def fetch(settings,
@@ -20,13 +21,13 @@ def fetch(settings,
 
         if cached_result:
             if settings['config'].DASHBOARD.VERBOSE:
-                print(f"[INFO] Cache hit for query: {query}")
+                logger.info(f"Cache hit for query: {query}")
             # Return cached result if available
             return pd.DataFrame(json.loads(cached_result))
 
         else:
             if settings['config'].DASHBOARD.VERBOSE:
-                print(f"[INFO] Cache miss for query: {query}")
+                logger.info(f"Cache miss for query: {query}")
             # Otherwise, query BigQuery
             query_job = settings['bq_client'].query(query)
             results = query_job.result().to_dataframe()
@@ -35,7 +36,7 @@ def fetch(settings,
             settings['redis_client'].set(cache_key, json.dumps(results.to_dict('records')), ex=3600)  # Cache for 1 hour
     except redis.ConnectionError as e:
         if settings['config'].DASHBOARD.VERBOSE:
-            print(f"[ERROR] Redis connection error: {e}")
+            logger.error(f"Redis connection error: {e}")
             query_job = settings['bq_client'].query(query)
             results = query_job.result().to_dataframe()
 

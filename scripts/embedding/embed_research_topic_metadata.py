@@ -13,6 +13,7 @@ import sys
 from box import Box
 from google.cloud import bigquery
 
+from util.common.helpers import set_logger
 from util.embedding.helpers import get_model_and_tokenizer, split_list_to_batch
 from util.embedding.research_topic import embed_research_topic_metadata
 
@@ -25,6 +26,8 @@ PATH_TO_CONFIG_FILE = 'config.yml'
 
 # -------------------- MAIN SCRIPT --------------------
 if __name__ == '__main__':
+    # Set logger
+    set_logger()
     # Load the configuration file
     config = Box.from_yaml(filename=PATH_TO_CONFIG_FILE)
 
