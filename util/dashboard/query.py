@@ -67,6 +67,7 @@ def overview_cards(settings: dict):
                COUNT(DISTINCT IF(IS_EXTERNAL_COLLABORATION, ARTICLE_SID, NULL))  AS EXTERNAL_COLLABORATIONS,
                COUNT(DISTINCT IF(IS_EUTOPIAN_COLLABORATION, ARTICLE_SID, NULL))  AS EUTOPIAN_COLLABORATIONS
         FROM {schema}.FCT_COLLABORATION
+        WHERE IS_ARTICLE_RELEVANT
     """
 
     # Fetch the data
@@ -91,6 +92,7 @@ def overview_trend_eutopia_collaboration(settings: dict):
                COUNT(DISTINCT IF(IS_EUTOPIAN_COLLABORATION, ARTICLE_SID, NULL)) AS EUTOPIAN_COLLABORATIONS
         FROM {schema}.FCT_COLLABORATION
         WHERE EXTRACT(YEAR FROM ARTICLE_PUBLICATION_DT) >= 2000
+        AND IS_ARTICLE_RELEVANT
         GROUP BY 1
         ORDER BY 1 ASC
     """
@@ -117,7 +119,7 @@ def overview_breakdown_publications_by_institution(settings):
         SELECT INSTITUTION_SID             AS INSTITUTION,
                COUNT(DISTINCT ARTICLE_SID) AS ARTICLES
         FROM {schema}.FCT_COLLABORATION
-        WHERE INSTITUTION_SID <> 'OTHER'
+        WHERE IS_ARTICLE_RELEVANT
         GROUP BY 1
         ORDER BY 2 ASC
     """
