@@ -1,11 +1,9 @@
 import dash
-
-from dash import dcc, html, Output, Input
-
 import dash_bootstrap_components as dbc
+from dash import dcc, html
 
-import util.dashboard.page_overview as page_overview
 import util.dashboard.page_author as page_author
+import util.dashboard.page_overview as page_overview
 
 
 def get_navbar():
@@ -89,7 +87,7 @@ def unknown_page():
 
 def navigate(path_name: str,
              settings: dict) -> dash.html.Div:
-    if path_name == '/overview':
+    if path_name == '/overview' or '/':
         return page_overview.layout(settings=settings)
     elif path_name == '/collaboration':
         return unknown_page()

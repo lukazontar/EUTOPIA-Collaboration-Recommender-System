@@ -22,22 +22,6 @@ models:
         description: "The title of the article."
         tests:
           - not_null
-      - name: ARTICLE_SHORT_TITLE
-        description: "The short title of the article."
-        tests:
-          - not_null
-      - name: ARTICLE_SUBTITLE
-        description: "The subtitle of the article."
-        tests:
-          - not_null
-      - name: ARTICLE_ABSTRACT
-        description: "The abstract of the article."
-        tests:
-          - not_null
-      - name: ARTICLE_REFERENCE
-        description: "The list of references of an article."
-        tests:
-          - not_null
       - name: ARTICLE_LANGUAGE
         description: "The language of the article."
         tests:
@@ -55,6 +39,14 @@ models:
         tests:
           - not_null
       - name: HAS_TEXT_EMBEDDING
+        description: "A flag indicating if the article has text embedding ingested."
+        tests:
+          - not_null
+      - name: HAS_ABSTRACT
+        description: "A flag indicating if the article has text embedding ingested."
+        tests:
+          - not_null
+      - name: HAS_REFERENCES
         description: "A flag indicating if the article has text embedding ingested."
         tests:
           - not_null
