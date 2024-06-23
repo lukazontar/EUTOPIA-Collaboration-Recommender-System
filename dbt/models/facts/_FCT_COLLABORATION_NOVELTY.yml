@@ -14,10 +14,6 @@ models:
         description: "The novelty index of the collaboration."
         tests:
           - not_null
-      - name: IS_NEW_COLLABORATION
-        description: "A flag indicating whether the collaboration is new."
-        tests:
-          - not_null
       - name: PK_COLLABORATION_NOVELTY
         description: "The primary key of the collaboration novelty fact. MD5 hash of the article SID."
         tests:

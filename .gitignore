@@ -163,3 +163,4 @@ secrets/*
 
 # Ignore data but keep folder
 data/*
+/docs/meetings/

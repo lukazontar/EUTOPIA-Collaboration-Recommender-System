@@ -8,7 +8,11 @@ sources:
     tables:
       - name: ARTICLE_TOPIC
         description: ""
-      - name: COLLABORATION_NOVELTY
+      - name: COLLABORATION_NOVELTY_INDEX
+        description: ""
+      - name: COLLABORATION_NOVELTY_METADATA
         description: ""
       - name: ARTICLE_LANGUAGE
+        description: ""
+      - name: TEXT_EMBEDDING_ARTICLE
         description: ""

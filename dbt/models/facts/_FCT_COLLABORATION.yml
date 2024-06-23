@@ -61,8 +61,16 @@ models:
         description: "A flag indicating whether the publication is from EUTOPIA institutions."
         tests:
           - not_null
-      - name: IS_NEW_COLLABORATION
-        description: "A flag indicating whether the collaboration is new."
+      - name: IS_NEW_AUTHOR_COLLABORATION
+        description: "A flag indicating whether the collaboration is a new collaboration for the given author."
+        tests:
+          - not_null
+      - name: IS_NEW_INSTITUTION_COLLABORATION
+        description: "A flag indicating whether the collaboration is a new collaboration for the given institution."
+        tests:
+          - not_null
+      - name: IS_ARTICLE_RELEVANT
+        description: "A flag indicating if the article is written in English, has sufficient text for embedding, has text embedding and is affiliated with EUTOPIA institution."
         tests:
           - not_null
       - name: PK_COLLABORATION

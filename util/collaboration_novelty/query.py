@@ -31,6 +31,7 @@ def query_collaboration_n_batches(bq_client: bigquery.Client,
              WHERE T.ARTICLE_SID IS NULL
                AND S.IS_SOLE_AUTHOR_PUBLICATION = FALSE
                AND S.AUTHOR_SID <> 'n/a'
+               AND S.INSTITUTION_SID <> 'n/a'
                AND EXTRACT(YEAR FROM S.ARTICLE_PUBLICATION_DT) >= {min_year}
                )
     /* Get the number of batches */

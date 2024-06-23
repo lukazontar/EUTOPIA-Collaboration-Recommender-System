@@ -87,6 +87,21 @@ Primarily, we want to understand two things:
 In this section, we outline a rough structure for the analytics dashboard with which we will be able to interactively
 explore the collaboration dynamics between EUTOPIA institutions and authors.
 
+---
+**NOTE**
+
+In Analytics Dashboard, we include only articles that:
+
+1. were made in collaboration with EUTOPIA institutions, i.e. have at least one author from an EUTOPIA institution,
+2. have title specified in metadata,
+3. have either abstract, references or full text available.
+4. are written in English and
+5. we have text embeddings ingested.
+
+---
+
+The dashboard will consist of three main pages:
+
 1. **Overview dashboard page:** shows some basic statistics like the number of articles, authors, trends, EUTOPIA
    collaboration rate, and new collaboration rate.
     - This page will include all the KPIs that will show the current state of the collaboration dynamics and our data.
