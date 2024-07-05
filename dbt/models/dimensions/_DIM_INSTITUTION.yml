@@ -2,9 +2,10 @@ version: 2
 
 models:
   - name: DIM_INSTITUTION
+    description: "The dimension table for institutions including the EUTOPIA institutions, pre-defined in this project."
     columns:
       - name: INSTITUTION_SID
-        description: "A unique identifier for the institution."
+        description: "A unique identifier for the institution. All unique identifiers are pre-defined including only the EUTOPIA institutions. 'OTHER' is used for institutions that are not part of the EUTOPIA organization and 'n/a' is used for missing values."
         tests:
           - not_null
           - unique
@@ -27,7 +28,7 @@ models:
           - not_null
           - unique
       - name: INSTITUTION_PRETTY_NAME
-        description: "The pretty name of the institution."
+        description: "The prettified name of the institution."
         tests:
           - not_null
       - name: INSTITUTION_COUNTRY

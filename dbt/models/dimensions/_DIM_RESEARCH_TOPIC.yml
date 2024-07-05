@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: DIM_RESEARCH_TOPIC
+    description: "The dimension table for research topics including all research topics and topic classification from the CERIF registry."
     columns:
       - name: RESEARCH_TOPIC_SID
         description: "A unique identifier for the research topic."

@@ -2,23 +2,24 @@ version: 2
 
 models:
   - name: FCT_COLLABORATION
+    description: "This fact table contains information about the collaborations between authors and institutions. It includes different types of collaborations, such as internal, external, and EUTOPIA collaborations, and flags indicating whether the collaboration is new for the author or institution."
     columns:
       - name: ARTICLE_SID
-        description: "A unique identifier for the article."
+        description: "A unique identifier for the article from DIM_ARTICLE."
         tests:
           - not_null
           - relationships:
               to: ref('DIM_ARTICLE')
               field: ARTICLE_SID
       - name: AUTHOR_SID
-        description: "A unique identifier for the author."
+        description: "A unique identifier for the author from DIM_AUTHOR."
         tests:
           - not_null
           - relationships:
               to: ref('DIM_AUTHOR')
               field: AUTHOR_SID
       - name: INSTITUTION_SID
-        description: "A unique identifier for the institution."
+        description: "A unique identifier for the institution from DIM_INSTITUTION."
         tests:
           - not_null
           - accepted_values: { values: [ 'CY',
@@ -62,11 +63,11 @@ models:
         tests:
           - not_null
       - name: IS_NEW_AUTHOR_COLLABORATION
-        description: "A flag indicating whether the collaboration is a new collaboration for the given author."
+        description: "A flag indicating whether the collaboration is a new collaboration for the given author, where we count a collaboration as a new collaboration if the given author did not yet collaborate with the exact same set of authors. This means that if the given author did not yet collaborate with at least one of the authors in the collaboration, the collaboration is considered new."
         tests:
           - not_null
       - name: IS_NEW_INSTITUTION_COLLABORATION
-        description: "A flag indicating whether the collaboration is a new collaboration for the given institution."
+        description: "A flag indicating whether the collaboration is a new collaboration for the given institution, where we count a collaboration as a new collaboration if there exists a pair of institutions whose authors did not yet collaborate in any possible combination."
         tests:
           - not_null
       - name: IS_ARTICLE_RELEVANT

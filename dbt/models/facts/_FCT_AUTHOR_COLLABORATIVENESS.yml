@@ -2,9 +2,10 @@ version: 2
 
 models:
   - name: FCT_AUTHOR_COLLABORATIVENESS
+    description: "This fact table contains information about the collaborativeness of authors trying to show how collaborative an author is compared to other authors."
     columns:
       - name: AUTHOR_SID
-        description: "A unique identifier for the author."
+        description: "A unique identifier for the author from DIM_ARTICLE."
         tests:
           - not_null
           - unique

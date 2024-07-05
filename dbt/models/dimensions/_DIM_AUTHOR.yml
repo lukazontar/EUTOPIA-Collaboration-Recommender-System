@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: DIM_AUTHOR
+    description: "The dimension table for authors."
     columns:
       - name: AUTHOR_SID
         description: "A unique identifier for the author."
@@ -14,5 +15,9 @@ models:
           - not_null
       - name: AUTHOR_ORCID_ID
         description: "The ORCID ID of the author."
+        tests:
+          - not_null
+      - name: IS_AUTHOR_MORE_COLLABORATIVE
+        description: "A flag indicating whether the author is more collaborative than the average author. This flag is derived from the author's collaboration rate and the average collaboration rate using a Beta distribution posterior."
         tests:
           - not_null
