@@ -70,7 +70,7 @@ models:
         tests:
           - not_null
       - name: IS_ARTICLE_RELEVANT
-        description: "A flag indicating if the article is written in English, has sufficient text for embedding, has text embedding and is affiliated with EUTOPIA institution."
+        description: "A flag indicating if the article is written in English, has sufficient text for embedding and is affiliated with EUTOPIA institution."
         tests:
           - not_null
       - name: PK_COLLABORATION
