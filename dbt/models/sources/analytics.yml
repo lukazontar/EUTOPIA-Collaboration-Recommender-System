@@ -16,3 +16,5 @@ sources:
         description: ""
       - name: TEXT_EMBEDDING_ARTICLE
         description: ""
+      - name: AUTHOR_COLLABORATIVENESS
+        description: ""
