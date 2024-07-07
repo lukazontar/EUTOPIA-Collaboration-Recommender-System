@@ -85,15 +85,11 @@ Check additional documentation in the `docs` directory.
 3. [Data Transformation](docs/data/03%20-%20Data%20Transformation.md): how to run data transformation pipelines
    in `dbt`.
 
-
 ### Development environment
 
 ```bash
-conda env export --from-history | findstr /V "^prefix: " > environment.yml
+conda env export --no-builds | findstr /V "^prefix: " > environment.yml
 ```
-
-Rename the environment name to `eutopia-env-1`.
-
 
 ```bash
 pip list --format=freeze > prod_requirements.txt
@@ -116,8 +112,7 @@ docker push lukazontar1/eutopia-recommender-system:version_1
 ### Production environment
 
 ```bash
-gcloud iam service-accounts keys create ./secrets/service-account-key.json
---iam-account=eutopia-recommender-system@collaboration-recommender.iam.gserviceaccount.com
+gcloud iam service-accounts keys create ./secrets/service_account_key.json --iam-account=eutopia-recommender-system@collaboration-recommender.iam.gserviceaccount.com
 ```
 
 ```bash
