@@ -1,3 +1,9 @@
+backoff==2.2.11
+beautifulsoup4==4.12.3
+dash==2.17.0
+dash_bootstrap_components==1.6.0
+matplotlib==3.8.4
+protobuf==5.27.2
 db-dtypes==1.2.0
 google-api-core==2.19.0
 google-auth==2.30.0
