@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  eutopia_service_1:
+    image: eutopia_image_1
+    secrets:
+      - gcp_service_account_key_file
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/gcp_service_account_key_file
+    command: tail -f /dev/null
+secrets:
+  gcp_service_account_key_file:
+    file: ./secrets/service_account_key.json

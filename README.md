@@ -85,10 +85,63 @@ Check additional documentation in the `docs` directory.
 3. [Data Transformation](docs/data/03%20-%20Data%20Transformation.md): how to run data transformation pipelines
    in `dbt`.
 
+
+### Development environment
+
 ```bash
 conda env export --from-history | findstr /V "^prefix: " > environment.yml
 ```
 
 Rename the environment name to `eutopia-env-1`.
 
-pip list --format=freeze > requirements.txt 
+
+```bash
+pip list --format=freeze > prod_requirements.txt
+```
+
+Filter out only the essential packages in `prod_requirements.txt`.
+
+```bash
+docker build --no-cache --tag eutopia_image_1 .
+```
+
+```bash
+docker tag eutopia_image_1:latest lukazontar1/eutopia-recommender-system:version_1
+```
+
+```bash
+docker push lukazontar1/eutopia-recommender-system:version_1
+```
+
+### Production environment
+
+```bash
+gcloud iam service-accounts keys create ./secrets/service-account-key.json
+--iam-account=eutopia-recommender-system@collaboration-recommender.iam.gserviceaccount.com
+```
+
+```bash
+docker-compose up -d
+```
+
+To execute the test script:
+
+```bash
+docker exec -it eutopia-collaboration-recommender-system-eutopia_service_1-1 /bin/bash -c ""source venv/bin/activate && python test.py"
+```
+
+To connect to the container:
+
+```bash
+docker exec -it eutopia-collaboration-recommender-system-eutopia_service_1-1 /bin/bash
+```
+
+[//]: # (docker run -dit \)
+
+[//]: # (  -v ./secrets/service-account-key.json:~/service-account-key.json \)
+
+[//]: # (  -e GOOGLE_APPLICATION_CREDENTIALS=~/service-account-key.json \)
+
+[//]: # (  --name eutopia_container_1 eutopia_image_1)
+
+[//]: # (docker exec -it eutopia_container_1 /bin/bash)
