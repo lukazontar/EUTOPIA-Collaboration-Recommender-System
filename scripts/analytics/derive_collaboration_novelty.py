@@ -10,11 +10,17 @@ This script is designed to be run incrementally and logs the calculation details
 the table where final results are stored.
 
 """
+import os
+import sys
+
 from box import Box
 from google.cloud import bigquery
 from google.cloud import storage
 from loguru import logger
 from tqdm import tqdm
+
+# Add the root directory of the project to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from util.collaboration_novelty.graph import fetch_collaboration_graph, save_graphs
 from util.collaboration_novelty.process import process_article_collaboration_novelty

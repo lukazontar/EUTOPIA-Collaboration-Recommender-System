@@ -13,12 +13,13 @@ import sys
 from box import Box
 from google.cloud import bigquery
 
+# Add the root directory of the project to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 from util.common.helpers import iterative_offload_to_bigquery, set_logger
 from util.embedding.helpers import get_model_and_tokenizer, split_list_to_batch
 from util.embedding.research_topic import embed_research_topic_top_n_articles_batch
 
-# Add the root directory of the project to the path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # -------------------- GLOBAL VARIABLES --------------------
 # The path to the configuration file

@@ -4,13 +4,17 @@ Script: Process ORCID Yearly Dump
 This script processes the yearly summary of ORCID records. The summary is a Tarfile file with summaries of ORCID records for a specific year. The summary is an XML file.
 The script reads the XML file and checks if it references an affiliation that is a member of the EUTOPIA organization. If it does, the record is saved in a BigQuery table.
 """
-
+import os
+import sys
 # -------------------- IMPORT LIBRARIES --------------------
 import tarfile
 
 from box import Box
 from google.cloud import bigquery
 from loguru import logger
+
+# Add the root directory of the project to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from util.academic.orcid import process_tarfile_file
 from util.common.helpers import iterative_offload_to_bigquery, set_logger

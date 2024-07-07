@@ -15,12 +15,12 @@ from google.cloud import bigquery
 from loguru import logger
 from tqdm import tqdm
 
+# Add the root directory of the project to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 from util.common.helpers import offload_batch_to_bigquery, set_logger
 from util.embedding.helpers import get_model_and_tokenizer
 from util.embedding.research_topic import combine_research_topic_embeddings
-
-# Add the root directory of the project to the path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # -------------------- GLOBAL VARIABLES --------------------
 # The path to the configuration file

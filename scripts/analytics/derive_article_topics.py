@@ -8,9 +8,15 @@ for each article based on the article embeddings and the research topic embeddin
 
 # -------------------- IMPORT LIBRARIES --------------------
 
+import os
+import sys
+
 from box import Box
 from google.cloud import bigquery
 from loguru import logger
+
+# Add the root directory of the project to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from util.analytics.article_topic import process_article_embedding_batch
 from util.common.helpers import set_logger

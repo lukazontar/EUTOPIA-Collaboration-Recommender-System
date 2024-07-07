@@ -15,11 +15,11 @@ from google.cloud import bigquery
 from loguru import logger
 from tqdm import tqdm
 
-from util.academic.crossref import query_top_n_by_keyword
-from util.common.helpers import set_logger
-
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from util.academic.crossref import query_top_n_by_keyword
+from util.common.helpers import set_logger
 
 # -------------------- GLOBAL VARIABLES --------------------
 # The path to the configuration file

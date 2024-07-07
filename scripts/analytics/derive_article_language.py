@@ -8,9 +8,15 @@ It also calculates the Novelty Collaboration Index (NCI) for each article.
 
 # -------------------- IMPORT LIBRARIES --------------------
 
+import os
+import sys
+
 from box import Box
 from google.cloud import bigquery
 from loguru import logger
+
+# Add the root directory of the project to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from util.analytics.article_language import process_article_language
 from util.common.helpers import iterative_offload_to_bigquery, set_logger

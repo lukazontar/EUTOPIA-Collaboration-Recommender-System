@@ -14,11 +14,11 @@ from box import Box
 from google.cloud import bigquery
 from loguru import logger
 
-from util.academic.crossref import process_json_gz
-from util.common.helpers import iterative_offload_to_bigquery, set_logger
-
 # Add the root directory of the project to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from util.academic.crossref import process_json_gz
+from util.common.helpers import iterative_offload_to_bigquery, set_logger
 
 # -------------------- GLOBAL VARIABLES --------------------
 PATH_TO_CONFIG_FILE = 'config.yml'

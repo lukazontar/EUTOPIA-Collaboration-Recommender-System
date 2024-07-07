@@ -4,12 +4,16 @@ Script: Embed articles
 This script reads through the articles that are included in the network and embeds the articles using a transformer model.
 
 """
+import os
+import sys
 from multiprocessing import Pool
 
 from box import Box
 from google.cloud import bigquery
 from langdetect import detect
 from loguru import logger
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from util.common.helpers import process_worker_batch, set_logger
 from util.embedding.article import embed_article_batch
@@ -46,7 +50,6 @@ if __name__ == '__main__':
         LEFT JOIN {target_table_id} T
         ON T.DOI = S.ARTICLE_DOI
         WHERE T.DOI IS NULL
-        LIMIT 40000
         """).result().to_dataframe()
 
     logger.info('Filtering non-supported languages...')

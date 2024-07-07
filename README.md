@@ -112,6 +112,10 @@ docker push lukazontar1/eutopia-recommender-system:version_1
 ### Production environment
 
 ```bash
+gcloud compute ssh --ssh-key-file C:\Users\LukaŽontar\lukazontar-pvt-eutopia eutopia-1
+```
+
+```bash
 gcloud iam service-accounts keys create ./secrets/service_account_key.json --iam-account=eutopia-recommender-system@collaboration-recommender.iam.gserviceaccount.com
 ```
 
@@ -122,7 +126,7 @@ docker-compose up -d
 To execute the test script:
 
 ```bash
-docker exec -it eutopia-collaboration-recommender-system-eutopia_service_1-1 /bin/bash -c ""source venv/bin/activate && python test.py"
+docker exec -it eutopia-collaboration-recommender-system-eutopia_service_1-1 /bin/bash -c "source venv/bin/activate && python scripts/embedding/embed_articles.py"
 ```
 
 To connect to the container:

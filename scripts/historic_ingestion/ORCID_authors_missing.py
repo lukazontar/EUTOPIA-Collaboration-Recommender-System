@@ -15,12 +15,13 @@ from box import Box
 from google.cloud import bigquery
 from loguru import logger
 
+# Add the root directory of the project to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 from util.academic.orcid import process_orcid_id, fetch_access_token
 from util.common.helpers import iterative_offload_to_bigquery, set_logger
 from util.common.query import get_datalake_authors
 
-# Add the root directory of the project to the path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # -------------------- GLOBAL VARIABLES --------------------
 # The path to the configuration file
