@@ -86,5 +86,9 @@ Check additional documentation in the `docs` directory.
    in `dbt`.
 
 ```bash
-conda env export --no-builds | findstr /V "^prefix: " > environment.yml
+conda env export --from-history | findstr /V "^prefix: " > environment.yml
 ```
+
+Rename the environment name to `eutopia-env-1`.
+
+pip list --format=freeze > requirements.txt 
