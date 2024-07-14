@@ -205,8 +205,7 @@ def element_in_flattened_list(element: str,
 
 
 def set_logger():
-    logger.add(sink='log/test.log',
+    logger.add(sink='log/log.log',
                enqueue=True,
-               colorize=True,
-               format="<green>{time}</green> <level>{message}</level>",
+               format="{time} {level} {message}",
                rotation="50 MB")
